@@ -41,7 +41,7 @@ export default class Gan2Popup {
     $pointer.style.left = '-7px';
     $pointer.style.top = '2px';
 
-    let [x, y, width] = [this.task.taskBar.$bar.getX(),
+    let [x, y, width] = [this.task.taskBar.$bar.getX() + this.gan2Chart._$container.clientLeft,
                          this.task.taskBar.$bar.getY(),
                          this.task.taskBar.$bar.getWidth()];
     if (event && event.type.includes('mouse')) {

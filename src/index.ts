@@ -83,7 +83,7 @@ export default class Gan2Chart {
   private constructOption: Option;
 
   private $svg: SVGElement;
-  private $container: HTMLElement;
+  _$container: HTMLElement;
   _$popupWrapper: HTMLElement;
   private popup: Gan2Popup;
 
@@ -158,18 +158,18 @@ export default class Gan2Chart {
     }
 
     // create wrapper element
-    this.$container = document.createElement('div');
-    this.$container.classList.add(classNames.container);
+    this._$container = document.createElement('div');
+    this._$container.classList.add(classNames.container);
 
     // append elements
     const parentElement = this.$svg.parentElement;
-    parentElement.appendChild(this.$container);
-    this.$container.appendChild(this.$svg);
+    parentElement.appendChild(this._$container);
+    this._$container.appendChild(this.$svg);
 
     // popup
     this._$popupWrapper = document.createElement('div');
     this._$popupWrapper.classList.add(classNames.popupWrapper);
-    this.$container.appendChild(this._$popupWrapper);
+    this._$container.appendChild(this._$popupWrapper);
   }
 
   /**

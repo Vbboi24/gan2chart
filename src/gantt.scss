@@ -59,7 +59,6 @@ $popup-shadow-color: #ccc !default
 
 .gan2 {
   margin: auto;
-  border: 1px solid $container-border-color;
 
   .bar {
     fill: $bar-color;
@@ -187,6 +186,9 @@ $popup-shadow-color: #ccc !default
   position: relative;
   overflow: auto;
   font-size: 12px;
+  display: inline-block;
+  width: 100%;
+  border: 1px solid $container-border-color;
 
   .popup-wrapper {
     position: absolute;
@@ -194,6 +196,7 @@ $popup-shadow-color: #ccc !default
     left: 0;
     background: $background-color;
     padding: 1px;
+    text-align: left;
     color: $text-color;
     border-radius: 3px;
     min-width: 100px;

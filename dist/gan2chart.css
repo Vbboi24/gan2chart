@@ -1,6 +1,5 @@
 .gan2 {
-  margin: auto;
-  border: 1px solid #e0e0e0; }
+  margin: auto; }
   .gan2 .bar {
     fill: white;
     stroke: #bababa;
@@ -144,13 +143,17 @@
 .gan2-container {
   position: relative;
   overflow: auto;
-  font-size: 12px; }
+  font-size: 12px;
+  display: inline-block;
+  width: 100%;
+  border: 1px solid #e0e0e0; }
   .gan2-container .popup-wrapper {
     position: absolute;
     top: 0;
     left: 0;
     background: white;
     padding: 1px;
+    text-align: left;
     color: #333;
     border-radius: 3px;
     min-width: 100px;
