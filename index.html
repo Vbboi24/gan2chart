@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Hello, Gan2Chart!</title>
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+  <script src="dist/gan2chart.min.js"></script>
+  <style>
+    h3.title {
+      font-family: 'Slabo 27px', serif;
+      text-align: center;
+      font-weight: normal;
+      font-size: 32px;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    .chart-section {
+      padding: 10px 0 4px 0;
+    }
+
+    .tools {
+      text-align: right;
+    }
+
+    .chart {
+      margin: 6px 0 6px 0;
+    }
+
+    /* custom bar class */
+    .gan2 .bar .bar-wrapper .bar-tomato .bar {
+      fill: white;
+      stroke: #bababa;
+      stroke-width: 0.5px;
+    }
+
+    .gan2 .bar .bar-wrapper .bar-tomato .bar-group .bar-progress {
+      fill: tomato;
+    }
+
+    .gan2 .bar .bar-wrapper .bar-tomato .bar-group .bar-label {
+      stroke: transparent;
+      fill: black;
+    }
+
+    /* fixed bar style */
+    .gan2 .bar .bar-wrapper .bar-group.bar-fixed .bar,
+    .gan2 .bar .bar-wrapper .bar-group.bar-fixed .bar-progress {
+      stroke: tomato;
+      stroke-dasharray: none;
+      animation: none;
+    }
+
+    /* custom arrow */
+    .gan2 .arrow-red {
+      stroke: red;
+    }
+
+    .gan2 .arrow-blue {
+      stroke: cornflowerblue;
+    }
+
+    .gan2 .arrow-purple {
+      stroke: mediumpurple;
+    }
+
+    /* custom popup style */
+    .popup-wrapper {
+      width: 180px;
+    }
+  </style>
+</head>
+<body>
+
+<h3 class="title">Gan2 Chart</h3>
+<section class="chart-section">
+  <section class="container">
+    <!--- change view mode buttons -->
+    <div class="tools">
+      <button onclick="gan2Chart.changeViewMode('hour', true)">Hour</button>
+      <button onclick="gan2Chart.changeViewMode('day')">Day</button>
+      <button onclick="gan2Chart.changeViewMode('month')">Month</button>
+      <button onclick="gan2Chart.changeViewMode('year')">Year</button>
+    </div>
+    <!--- / change view mode buttons -->
+
+    <!-- parent chart -->
+    <div class="chart" id="parent-chart"></div>
+    <!-- / parent chart -->
+
+    <!-- child chart -->
+    <div class="chart" id="child-chart"></div>
+    <!-- / child chart -->
+
+  </section>
+</section>
+
+<script>
+  const tasks = [
+    {
+      start: '2018-10-01 01:00:00',
+      end: '2018-10-14 20:00:00',
+      name: 'Project X',
+      id: "task0",
+      progress: 70,
+      progressFixed: true,
+      customClass: 'bar-tomato',
+      childTask: [
+        {
+          start: '2018-10-01 02:00:00',
+          end: '2018-10-04',
+          name: 'Planning',
+          id: "task0-1",
+          progress: 20,
+          customArrowClass: 'arrow-red',
+          childTask: [
+            {
+              start: '2018-10-02 12:00:00',
+              end: '2018-10-04',
+              name: 'Planning Meeting',
+              id: "Task 0-0-1",
+              progress: 50,
+              customClass: ''
+            }
+          ]
+        },
+        {
+          start: '2018-10-05 00:00:00',
+          end: '2018-10-08 12:00:00',
+          name: 'Coding',
+          id: "task0-2",
+          progress: 50,
+          customArrowClass: 'arrow-blue',
+          customClass: ''
+        },
+        {
+          start: '2018-10-10 00:00:00',
+          end: '2018-10-12 12:00:00',
+          name: 'QA',
+          id: "task0-3",
+          progress: 50,
+          customArrowClass: 'arrow-purple',
+          customClass: '',
+          fixed: true
+        }
+      ]
+    }
+  ];
+
+
+  const gan2Chart = new Gan2Chart('#parent-chart', tasks, {
+    viewMode: 'day',
+    popupTrigger: 'click',
+    autoScroll: false,
+    language: 'ko',
+    popupHtmlSupplier: (task) => {
+      return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
+              <div class="date">${format(task.start)} ~ ${format(task.end)}</div>
+              <div class="content">progress: ${task.progress}%</div>`;
+    },
+    onTaskProgressChange: (e, task, oldProgress, newProgress) => {
+      if (e.type === 'mouseup') {
+        console.log(e.type, task.name, 'progress change!')
+      }
+    },
+    onTaskChange: (e, task, oldTaskStart, oldTaskEnd, newTaskStart, newTaskEnd) => {
+      if (e.type === 'mouseup') {
+        console.log(e.type, task.name, 'task change!')
+      }
+    },
+    onPopupOpen: (e, task) => {
+      console.log('popup open!')
+    },
+    onPopupClose: (e) => {
+      console.log('popup close!')
+    },
+    onTaskClick: (e, task) => {
+      document.querySelector('#child-chart').innerHTML = '';
+      new Gan2Chart('#child-chart', task, {
+        language: 'en',
+        viewMode: 'hour',
+        autoScroll: true,
+        paddingBarCount: 1,
+        datePaddingQty: 2,
+        onChange: (e, changedTask) => {
+          const findTask = task.getAllChildTaskWithThis
+              .find(t => t.name === changedTask.name);
+          findTask.start = changedTask.start;
+          findTask.end = changedTask.end;
+          findTask.progress = changedTask.progress;
+          findTask.gan2Chart.refresh();
+        }
+      });
+    }
+  });
+
+  function format(date) {
+    return date.toLocaleDateString();
+  }
+</script>
+
+</body>
+</html>
