@@ -30,6 +30,10 @@
       margin: 6px 0 6px 0;
     }
 
+    #child-chart {
+      margin-top: 20px;
+    }
+
     /* custom bar class */
     .gan2 .bar .bar-wrapper .bar-tomato .bar {
       fill: white;
@@ -156,6 +160,7 @@
     popupTrigger: 'click',
     autoScroll: false,
     language: 'ko',
+    datePaddingQty: 5,
     popupHtmlSupplier: (task) => {
       return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
               <div class="date">${format(task.start)} ~ ${format(task.end)}</div>
@@ -184,7 +189,6 @@
         viewMode: 'hour',
         autoScroll: true,
         paddingBarCount: 1,
-        datePaddingQty: 2,
         onChange: (e, changedTask) => {
           const findTask = task.getAllChildTaskWithThis
               .find(t => t.name === changedTask.name);
