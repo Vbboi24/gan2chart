@@ -1,6 +1,8 @@
 ## Introduction
 [Gan2Chart](https://github.com/partnerjun/gan2chart) is a gantt chart library. It based on [frappe/gantt](https://github.com/frappe/gantt) and use TypeScript, scss.
 
+![example](https://github.com/partnerjun/gan2chart/raw/master/example.jpg)
+
 ## Install
 ```
 npm install gan2chart
@@ -119,10 +121,6 @@ and start:
     return date.toLocaleDateString();
   }
 ```
-
-
-![example](https://github.com/partnerjun/gan2chart/raw/master/example.jpg)
-
 
 ## Features
 - Option Object
