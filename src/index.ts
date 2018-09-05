@@ -40,6 +40,7 @@ export interface Option {
   language: string,
   startDate?: string,     // optional. gantt chart startDate date
   endDate?: string,       // optional. gantt chart endDate date
+  weekendCheck: boolean,
   autoScroll: boolean,    // default: true. scroll to gantt chart startDate point
   datePaddingQty: any,    // default: true. ['auto', number] chart will be shown [startDate date - qty] to [endDate date + qty]
   paddingBarCount: number // default: 2. set the padding bar count on the bottom
@@ -69,6 +70,7 @@ const defaultOption: Option = {
   arrowCurve: 5,
   padding: 18,
   viewMode: 'Day',
+  weekendCheck: true,
   popupTrigger: 'mousemove',
   popupHtmlSupplier: null,
   autoScroll: true,
@@ -476,7 +478,7 @@ export default class Gan2Chart {
       }
     })();
 
-    // drawGridHighlight
+    // drawDayHighlight
     (function () {
         const now = DateUtil.now();
         const viewMode = self._viewMode;
@@ -485,19 +487,49 @@ export default class Gan2Chart {
         const x = DateUtil.diff(now, self.chartDates[0], viewMode) * self.option.columnWidth;
         const width = self.option.columnWidth;
         const height = (self.option.barHeight + self.option.padding)
-                        * self._gan2TaskLength
-                        + self.option.headerHeight
-                        + self.option.padding / 2;
+                        * self._gan2TaskLength;
 
         createSVG('rect', {
                               x: x,
-                              y: 0,
+                              y: self.option.headerHeight + self.option.padding/2,
                               width: width,
                               height: height,
                               class: classNames.todayHighlight,
                               appendTo: self._layers['grid']
                             });
     })();
+
+
+    // saturday / sunday highlight
+    (function () {
+      if (!self.option.weekendCheck || self._viewMode > DateScale.DAY) return;
+
+      for (let i=0; i<self.chartDates.length; i++) {
+        const date = self.chartDates[i];
+
+        let dayClass;
+        if (date.getDay() === 0) dayClass = classNames.sundayHighlight;
+        else if (date.getDay() === 6) dayClass = classNames.saturdayHighlight;
+
+        // not weekend
+        if (!dayClass) continue;
+
+        const x = i * self.option.columnWidth;
+        const width = self.option.columnWidth;
+        const height = (self.option.barHeight + self.option.padding)
+                        * self._gan2TaskLength;
+
+        createSVG('rect', {
+                                      x: x,
+                                      y: self.option.headerHeight + self.option.padding/2,
+                                      width: width,
+                                      height: height,
+                                      class: dayClass,
+                                      appendTo: self._layers['grid']
+                                    });
+      }
+    })();
+
   }
 
 
@@ -594,7 +626,7 @@ export default class Gan2Chart {
 
   private bindGridClickEvent(): void {
     // grid click event
-    $.on(this.$svg, this.option.popupTrigger, `.${classNames.gridRow}, .${classNames.gridHeader}`,
+    $.on(this.$svg, this.option.popupTrigger, `.grid`,
       (e) => {
         this._unSelectAll();
         this._hidePopup(e);

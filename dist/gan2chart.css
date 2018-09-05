@@ -90,6 +90,12 @@
   .gan2 .today-highlight {
     fill: #fcf8e3;
     opacity: 0.5; }
+  .gan2 .saturday-highlight {
+    fill: #deeafc;
+    opacity: 0.25; }
+  .gan2 .sunday-highlight {
+    fill: #fcd9cb;
+    opacity: 0.25; }
   .gan2 .arrow {
     fill: none;
     stroke: #666;
@@ -145,6 +151,7 @@
   overflow: auto;
   font-size: 12px;
   display: inline-block;
+  width: auto;
   text-align: left !important; }
   .gan2-container .popup-wrapper {
     position: absolute;

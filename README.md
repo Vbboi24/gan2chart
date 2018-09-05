@@ -26,20 +26,21 @@
    * Gan2Chart consturct option
    */
   interface Option {
-    headerHeight: number,
-    columnWidth: number,
-    barHeight: number,
-    barCornerRadius: number,
-    arrowCurve: number,
-    padding: number,
-    viewMode: string,       // default: day. ['hour', 'day', 'month', 'year']
-    popupTrigger: string,   // default: mousemove. ['click', 'mousemove', etc...]
+    headerHeight: number,    // default: 50
+    columnWidth: number,     // default: 40
+    barHeight: number,       // default: 20
+    barCornerRadius: number, // default: 2
+    arrowCurve: number,      // default: 5
+    padding: number,         // default: 18
+    viewMode: string,        // default: day. ['hour', 'day', 'month', 'year']
+    popupTrigger: string,    // default: mousemove. ['click', 'mousemove', etc...]
     popupHtmlSupplier: (Gan2Task) => HTMLDocument,
     language: string,
-    startDate?: string,     // optional. gantt chart start date
-    endDate?: string,       // optional. gantt chart end date
-    autoScroll: boolean,    // default: true. scroll to gantt chart start point
-    datePaddingQty: any,    // default: true. ['auto', number] chart will be shown [start date - qty] to [end date + qty]
+    startDate?: string,      // optional. gantt chart start date
+    endDate?: string,        // optional. gantt chart end date
+    weekendCheck?: boolean,  // default: true. fill the cell of sunday and saturday
+    autoScroll: boolean,     // default: true. scroll to gantt chart start point
+    datePaddingQty: any,     // default: true. ['auto', number] chart will be shown [start date - qty] to [end date + qty]
     paddingBarCount: number, // default: 2. set the padding bar count on the bottom
     
     onTaskProgressChange: (e, task, oldProgress, newProgress) => {

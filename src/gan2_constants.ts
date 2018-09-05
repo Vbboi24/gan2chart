@@ -22,6 +22,8 @@ export const classNames = {
   gridHeader: 'grid-header',
   tick: 'tick',
   todayHighlight: 'today-highlight',
+  saturdayHighlight: 'saturday-highlight',
+  sundayHighlight: 'sunday-highlight',
   active: 'active',
   handleGroup: 'handle-group',
   bar: 'bar',

@@ -10,7 +10,7 @@ const dev = {
     output: {
         name: 'Gan2Chart',
         file: 'dist/gan2chart.js',
-        format: 'cjs'
+        format: 'umd'
     },
     plugins: [
     		typescript(),
