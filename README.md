@@ -62,8 +62,8 @@
     
     }
   }
-  
   ```
+
 
 - API and Property
   * Gan2Chart
