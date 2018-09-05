@@ -10,8 +10,8 @@ import Gan2Popup from "./gan2_popup";
  * Gantt Task
  */
 export interface Task {
-  start: string,
-  end: string,
+  startDate: string,
+  endDate: string,
   name: string,
   id: string,
   progress: number,
@@ -175,18 +175,18 @@ export default class Gan2Chart {
 
   /**
    * task to Gan2Task
-   * @param task
+   * @param tasks
    */
-  private setupTasks(task: any[]) {
-    if (!(Array.isArray(task))) {
-      task = [task];
+  private setupTasks(tasks: any[]) {
+    if (!(Array.isArray(tasks))) {
+      tasks = [tasks];
 
-    } else if (task[0] instanceof Gan2Task) {
-      task = this.gan2TaskToTask(task);
+    } else if (tasks[0] instanceof Gan2Task) {
+      tasks = this.gan2TaskToTask(tasks);
 
     }
 
-    this.tasks = task.map(task => new Gan2Task(this, task, this._viewMode));
+    this.tasks = tasks.map(task => new Gan2Task(this, task, this._viewMode));
     this._gan2TaskLength = this.tasks.reduce((acc, cur) => acc + cur.length, 0)
                           + this.option.paddingBarCount;
   }
@@ -247,10 +247,10 @@ export default class Gan2Chart {
 
       const checkTasks = (tasks, startDate?, endDate?) => {
         tasks.forEach(task => {
-          if (!startDate || task.start.getTime() < startDate.getTime())
-            startDate = task.start;
-          if (!endDate || task.end.getTime() > endDate.getTime())
-            endDate = task.end;
+          if (!startDate || task.startDate.getTime() < startDate.getTime())
+            startDate = task.startDate;
+          if (!endDate || task.endDate.getTime() > endDate.getTime())
+            endDate = task.endDate;
 
           if (task.childTask) {
             [startDate, endDate] = checkTasks(task.childTask, startDate, endDate);

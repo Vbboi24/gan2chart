@@ -108,8 +108,8 @@
 <script>
   const tasks = [
     {
-      start: '2018-10-01 01:00:00',
-      end: '2018-10-14 20:00:00',
+      startDate: '2018-10-01 01:00:00',
+      endDate: '2018-10-14 20:00:00',
       name: 'Project X',
       id: "task0",
       progress: 70,
@@ -117,16 +117,16 @@
       customClass: 'bar-tomato',
       childTask: [
         {
-          start: '2018-10-01 02:00:00',
-          end: '2018-10-04',
+          startDate: '2018-10-01 02:00:00',
+          endDate: '2018-10-04',
           name: 'Planning',
           id: "task0-1",
           progress: 20,
           customArrowClass: 'arrow-red',
           childTask: [
             {
-              start: '2018-10-02 12:00:00',
-              end: '2018-10-04',
+              startDate: '2018-10-02 12:00:00',
+              endDate: '2018-10-04',
               name: 'Planning Meeting',
               id: "Task 0-0-1",
               progress: 50,
@@ -135,8 +135,8 @@
           ]
         },
         {
-          start: '2018-10-05 00:00:00',
-          end: '2018-10-08 12:00:00',
+          startDate: '2018-10-05 00:00:00',
+          endDate: '2018-10-08 12:00:00',
           name: 'Coding',
           id: "task0-2",
           progress: 50,
@@ -144,8 +144,8 @@
           customClass: ''
         },
         {
-          start: '2018-10-10 00:00:00',
-          end: '2018-10-12 12:00:00',
+          startDate: '2018-10-10 00:00:00',
+          endDate: '2018-10-12 12:00:00',
           name: 'QA',
           id: "task0-3",
           progress: 50,
@@ -166,7 +166,7 @@
     datePaddingQty: 5,
     popupHtmlSupplier: (task) => {
       return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
-              <div class="date">${format(task.start)} ~ ${format(task.end)}</div>
+              <div class="date">${format(task.startDate)} ~ ${format(task.endDate)}</div>
               <div class="content">progress: ${task.progress}%</div>`;
     },
     onTaskProgressChange: (e, task, oldProgress, newProgress) => {
@@ -194,9 +194,9 @@
         paddingBarCount: 1,
         onChange: (e, changedTask) => {
           const findTask = task.getAllChildTaskWithThis
-              .find(t => t.name === changedTask.name);
-          findTask.startDate = changedTask.start;
-          findTask.endDate = changedTask.end;
+                               .find(t => t.name === changedTask.name);
+          findTask.startDate = changedTask.startDate;
+          findTask.endDate = changedTask.endDate;
           findTask.progress = changedTask.progress;
           findTask.gan2Chart.refresh();
         }

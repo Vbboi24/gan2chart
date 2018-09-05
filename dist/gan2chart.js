@@ -644,8 +644,8 @@ var Gan2Chart = (function () {
           this.id = id ? id.toString() : Gan2Task.generateId(task);
           this.name = task.name;
           this.index = gan2Chart._gan2TaskIndex++;
-          this.startDate = DateUtil.parse(task.start);
-          this.endDate = DateUtil.parse(task.end);
+          this.startDate = DateUtil.parse(task.startDate);
+          this.endDate = DateUtil.parse(task.endDate);
           this.progress = task.progress;
           this.progressFixed = task.progressFixed;
           this.customArrowClass = task.customArrowClass;
@@ -655,7 +655,7 @@ var Gan2Chart = (function () {
           this.childTask = [];
           this._arrows = [];
           // default task date
-          if (!task.start && !task.end) {
+          if (!task.startDate && !task.endDate) {
               var today = DateUtil.today();
               this.startDate = today;
               this.endDate = DateUtil.add(today, 2, defaultDateScale);
@@ -1263,20 +1263,20 @@ var Gan2Chart = (function () {
           }
           /**
            * task to Gan2Task
-           * @param task
+           * @param tasks
            */
 
       }, {
           key: 'setupTasks',
-          value: function setupTasks(task) {
+          value: function setupTasks(tasks) {
               var _this = this;
 
-              if (!Array.isArray(task)) {
-                  task = [task];
-              } else if (task[0] instanceof Gan2Task) {
-                  task = this.gan2TaskToTask(task);
+              if (!Array.isArray(tasks)) {
+                  tasks = [tasks];
+              } else if (tasks[0] instanceof Gan2Task) {
+                  tasks = this.gan2TaskToTask(tasks);
               }
-              this.tasks = task.map(function (task) {
+              this.tasks = tasks.map(function (task) {
                   return new Gan2Task(_this, task, _this._viewMode);
               });
               this._gan2TaskLength = this.tasks.reduce(function (acc, cur) {
@@ -1344,8 +1344,8 @@ var Gan2Chart = (function () {
 
                   var checkTasks = function checkTasks(tasks, startDate, endDate) {
                       tasks.forEach(function (task) {
-                          if (!startDate || task.start.getTime() < startDate.getTime()) startDate = task.start;
-                          if (!endDate || task.end.getTime() > endDate.getTime()) endDate = task.end;
+                          if (!startDate || task.startDate.getTime() < startDate.getTime()) startDate = task.startDate;
+                          if (!endDate || task.endDate.getTime() > endDate.getTime()) endDate = task.endDate;
                           if (task.childTask) {
                               var _checkTasks = checkTasks(task.childTask, startDate, endDate);
 

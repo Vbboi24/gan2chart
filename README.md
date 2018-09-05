@@ -9,8 +9,8 @@
  * Task option
  */
 interface Task {
-  start: string,
-  end: string,
+  startDate: string,
+  endDate: string,
   name: string,
   id: string,
   progress: number,

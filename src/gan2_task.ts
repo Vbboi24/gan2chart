@@ -37,8 +37,8 @@ export default class Gan2Task {
     this.id = id ? id.toString() : Gan2Task.generateId(task);
     this.name = task.name;
     this.index = gan2Chart._gan2TaskIndex++;
-    this.startDate = DateUtil.parse(task.start);
-    this.endDate = DateUtil.parse(task.end);
+    this.startDate = DateUtil.parse(task.startDate);
+    this.endDate = DateUtil.parse(task.endDate);
     this.progress = task.progress;
     this.progressFixed = task.progressFixed;
     this.customArrowClass = task.customArrowClass;
@@ -50,13 +50,15 @@ export default class Gan2Task {
     this._arrows = [];
 
     // default task date
-    if (!task.start && !task.end) {
+    if (!task.startDate && !task.endDate) {
       const today: Date = DateUtil.today();
       this.startDate = today;
       this.endDate = DateUtil.add(today, 2, defaultDateScale);
+
     } else {
       this.startDate = DateUtil.parse(this.startDate) || DateUtil.add(this.endDate, -2, defaultDateScale);
       this.endDate = DateUtil.parse(this.endDate) || DateUtil.add(this.startDate, 2, defaultDateScale);
+
     }
 
     // if hours is not set, assume the last day is full day
