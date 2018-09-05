@@ -69,10 +69,10 @@ and start:
       ]
     }
   ];
-``
+```
 
 
-``js
+```js
                  // new Gan2Chart('cssQuery', Task[], option?);
   const gan2Chart = new Gan2Chart('#chart', tasks, {
     viewMode: 'day',
