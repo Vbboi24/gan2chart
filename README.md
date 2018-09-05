@@ -129,7 +129,7 @@ and start:
 - Option Object
   ```js
   /**
-   * Task option
+   * Task interface
    */
   interface Task {
     startDate: string,
@@ -146,7 +146,8 @@ and start:
     progressFixed?: boolean;    // task progress fix
     childTask: Task[]
   }
-  
+  ```
+  ```js
   /**
    * Gan2Chart consturct option
    */
