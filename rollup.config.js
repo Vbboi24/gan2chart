@@ -14,7 +14,7 @@ const dev = {
     },
     plugins: [
     		typescript(),
-    		babel({exclude: ['/\.ts$/',  'src/*.scss','node_modules/**']}),
+    		babel({exclude: ['/\.ts$/', 'src/*.scss','node_modules/**']}),
         scss({
             output: 'dist/gan2chart.css'
         })

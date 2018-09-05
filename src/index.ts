@@ -38,10 +38,10 @@ export interface Option {
   popupTrigger: string,   // default: mousemove. ['click', 'mousemove', etc...]
   popupHtmlSupplier: (Gan2Task) => HTMLDocument,
   language: string,
-  startDate?: string,     // optional. gantt chart start date
-  endDate?: string,       // optional. gantt chart end date
-  autoScroll: boolean,    // default: true. scroll to gantt chart start point
-  datePaddingQty: any,    // default: true. ['auto', number] chart will be shown [start date - qty] to [end date + qty]
+  startDate?: string,     // optional. gantt chart startDate date
+  endDate?: string,       // optional. gantt chart endDate date
+  autoScroll: boolean,    // default: true. scroll to gantt chart startDate point
+  datePaddingQty: any,    // default: true. ['auto', number] chart will be shown [startDate date - qty] to [endDate date + qty]
   paddingBarCount: number // default: 2. set the padding bar count on the bottom
 }
 
@@ -107,6 +107,7 @@ export default class Gan2Chart {
   constructor(wrapper: string | HTMLElement | SVGElement,
               tasks: any[],
               option: Option) {
+
     this.option = Object.assign({}, defaultOption, option);
     this.constructOption = Object.assign({}, this.option);
 
@@ -177,18 +178,21 @@ export default class Gan2Chart {
    * @param task
    */
   private setupTasks(task: any[]) {
-    if (!(task instanceof Array)) {
+    if (!(Array.isArray(task))) {
       task = [task];
+
     } else if (task[0] instanceof Gan2Task) {
       task = this.gan2TaskToTask(task);
+
     }
+
     this.tasks = task.map(task => new Gan2Task(this, task, this._viewMode));
     this._gan2TaskLength = this.tasks.reduce((acc, cur) => acc + cur.length, 0)
-                            + this.option.paddingBarCount;
+                          + this.option.paddingBarCount;
   }
 
   /**
-   * update view mode and redraw, event handling
+   * update view mode and redraw with event handling
    * @param newViewMode
    * @param setScroll
    */
@@ -226,7 +230,7 @@ export default class Gan2Chart {
   }
 
   /**
-   *
+   * set chart dates
    */
   private setupDate() {
     const self = this;
@@ -234,7 +238,7 @@ export default class Gan2Chart {
     setupDateValue();
 
     /**
-     * find start and end date for gantt chart drawing
+     * find startDate and endDate date for gantt chart drawing
      * @param datePaddingScale
      * @param datePaddingQty
      */
@@ -326,7 +330,7 @@ export default class Gan2Chart {
   }
 
   /**
-   * scroll To task start position
+   * scroll To task startDate position
    */
   private setScrollPosition() {
     const parentElement = this.$svg.parentElement;
@@ -344,8 +348,7 @@ export default class Gan2Chart {
    * create and draw arrow object
    */
   private drawArrows(): void {
-    this.tasks.reduce((acc, cur) =>
-                                      acc.concat(cur.drawArrow()), []);
+    this.tasks.forEach(task => task._drawArrow());
   }
 
     /**
@@ -354,7 +357,6 @@ export default class Gan2Chart {
   private setupLayer(): void {
       this._layers = {};
       const layers = ['grid', 'date', 'arrow', 'progress', 'bar', 'details'];
-      // make $group _layers
       for (let layer of layers) {
         this._layers[layer] = createSVG('g', {
                                               class: layer,
@@ -392,22 +394,22 @@ export default class Gan2Chart {
     (function () {
       self.gridWidth = self.chartDates.length * self.option.columnWidth;
       self.gridHeight = self.option.headerHeight
-        + self.option.padding
-        + (self.option.barHeight + self.option.padding) * self._gan2TaskLength;
+                        + self.option.padding
+                        + (self.option.barHeight + self.option.padding) * self._gan2TaskLength;
 
       createSVG('rect', {
-        x: 0,
-        y: 0,
-        width: self.gridWidth,
-        height: self.gridHeight,
-        class: classNames.gridBackground,
-        appendTo: self._layers['grid']
-      });
+                                    x: 0,
+                                    y: 0,
+                                    width: self.gridWidth,
+                                    height: self.gridHeight,
+                                    class: classNames.gridBackground,
+                                    appendTo: self._layers['grid']
+                                  });
 
       $.attr(self.$svg, {
-        height: self.gridHeight,
-        width: self.gridWidth
-      });
+                              height: self.gridHeight,
+                              width: self.gridWidth
+                            });
     })();
 
     // drawGridRows
@@ -423,22 +425,22 @@ export default class Gan2Chart {
 
       for (let i=0, length=self._gan2TaskLength; i<length; i++) {
         createSVG('rect', {
-          x: 0,
-          y: rowY,
-          width: rowWidth,
-          height: rowHeight,
-          class: classNames.gridRow,
-          appendTo: rowsLayer
-        });
+                                      x: 0,
+                                      y: rowY,
+                                      width: rowWidth,
+                                      height: rowHeight,
+                                      class: classNames.gridRow,
+                                      appendTo: rowsLayer
+                                    });
 
         createSVG('line', {
-          x1: 0,
-          y1: rowY + rowHeight,
-          x2: rowWidth,
-          y2: rowY + rowHeight,
-          class: classNames.rowLine,
-          appendTo: linesLayer
-        });
+                                      x1: 0,
+                                      y1: rowY + rowHeight,
+                                      x2: rowWidth,
+                                      y2: rowY + rowHeight,
+                                      class: classNames.rowLine,
+                                      appendTo: linesLayer
+                                    });
 
         rowY += self.option.barHeight + self.option.padding;
       }
@@ -449,13 +451,13 @@ export default class Gan2Chart {
       const headerWidth = self.chartDates.length * self.option.columnWidth;
       const headerHeight = self.option.headerHeight + 10;
       createSVG('rect', {
-        x: 0,
-        y: 0,
-        width: headerWidth,
-        height: headerHeight,
-        class: classNames.gridHeader,
-        appendTo: self._layers['grid']
-      });
+                                    x: 0,
+                                    y: 0,
+                                    width: headerWidth,
+                                    height: headerHeight,
+                                    class: classNames.gridHeader,
+                                    appendTo: self._layers['grid']
+                                  });
     })();
 
     // drawGridTicks
@@ -466,10 +468,10 @@ export default class Gan2Chart {
 
       for (let i=0, length=self.chartDates.length; i<length; i++) {
         createSVG('path', {
-                            d: `M ${columnWidth * i} ${tickY} v ${tickHeight}`,
-                            class: classNames.tick,
-                            appendTo: self._layers['grid']
-                          });
+                                      d: `M ${columnWidth * i} ${tickY} v ${tickHeight}`,
+                                      class: classNames.tick,
+                                      appendTo: self._layers['grid']
+                                    });
       }
     })();
 
@@ -481,10 +483,10 @@ export default class Gan2Chart {
 
         const x = DateUtil.diff(now, self.chartDates[0], viewMode) * self.option.columnWidth;
         const width = self.option.columnWidth;
-        const height = (self.option.barHeight + self.option.padding) *
-                        self._gan2TaskLength +
-                        self.option.headerHeight +
-                        self.option.padding / 2;
+        const height = (self.option.barHeight + self.option.padding)
+                        * self._gan2TaskLength
+                        + self.option.headerHeight
+                        + self.option.padding / 2;
 
         createSVG('rect', {
                               x: x,
@@ -522,15 +524,15 @@ export default class Gan2Chart {
       if (i === length || lastDateInfo.upperText != date.upperText) {
         const lastUpperTextPadding = i === length ? this.option.columnWidth / 2 : 0;
         const $upperText = createSVG('text', {
-                                                x: (lastDateInfo.upperX + date.upperX) / 2 + lastUpperTextPadding,
-                                                y: lastDateInfo.upperY,
-                                                innerHTML: lastDateInfo.upperText,
-                                                class: classNames.upperText,
-                                                appendTo: this._layers['date']
-                                              });
+                                                        x: (lastDateInfo.upperX + date.upperX) / 2 + lastUpperTextPadding,
+                                                        y: lastDateInfo.upperY,
+                                                        innerHTML: lastDateInfo.upperText,
+                                                        class: classNames.upperText,
+                                                        appendTo: this._layers['date']
+                                                      });
 
         // remove out-of-bound chartDates
-        if ($upperText.getBBox().x2 > this._layers['grid'].getBBox().width) {
+        if ($upperText.getBBox().x > this._layers['grid'].getBBox().width) {
           $upperText.remove();
         }
 
@@ -539,15 +541,15 @@ export default class Gan2Chart {
         if (lastDateInfo.upperText === date.upperText) return;
 
         createSVG('line', {
-                            x1: date.lowerX - this.option.columnWidth/2,
-                            y1: 0,
-                            x2: date.lowerX - this.option.columnWidth/2,
-                            y2: this.gridHeight,
-                            class: classNames.upperDivisionBar,
-                            appendTo: this._layers['grid']
-                          });
-        lastDateInfo = date;
+                                    x1: date.lowerX - this.option.columnWidth/2,
+                                    y1: 0,
+                                    x2: date.lowerX - this.option.columnWidth/2,
+                                    y2: this.gridHeight,
+                                    class: classNames.upperDivisionBar,
+                                    appendTo: this._layers['grid']
+                                  });
 
+        lastDateInfo = date;
       }
     }
 
@@ -612,12 +614,12 @@ export default class Gan2Chart {
       let bar: Gan2Bar = null;
       const isAction = () => isDragging || isResizingLeft || isResizingRight;
 
-      // drag start event handling
+      // drag startDate event handling
       $.on(this.$svg, 'mousedown', `.${classNames.barWrapper}, .${classNames.handle}`, (e, $bar) => {
         const barWrapper = $.closest(`.${classNames.barWrapper}`, $bar);
         barWrapper.classList.add(classNames.active);
         // get bar object
-        bar = this.getBar(barWrapper.getAttribute('data-id'));
+        bar = this._getBar(barWrapper.getAttribute('data-id'));
         if (!bar || (bar && bar.fixed)) return; // invalid or fixed bar
 
         // check target and event
@@ -630,7 +632,7 @@ export default class Gan2Chart {
           isDragging = true;
         }
 
-        // event start position
+        // event startDate position
         xOnStart = e.offsetX;
         yOnStart = e.offsetY;
 
@@ -649,14 +651,14 @@ export default class Gan2Chart {
       $.on(this.$svg, 'mousemove', e => {
         if (!isAction()) return;
         const dx = e.offsetX - xOnStart;
-        this._draggingBar = bar;
+        const draggingBar = bar;
 
         bars.forEach(bar => {
           const $bar = bar.$bar;
           $bar.finaldx = this.getSnapPosition(dx);
 
           if (isResizingLeft) {
-            if (this._draggingBar === bar) {
+            if (draggingBar === bar) {
               bar.updateBarPosition({
                 x: $bar.ox + $bar.finaldx,
                 width: $bar.owidth - $bar.finaldx
@@ -674,14 +676,18 @@ export default class Gan2Chart {
           }
         });
 
+        // if moved snap position, hold dragged bar
+        if (dx !== bar.$bar.finaldx) {
+          this._draggingBar = draggingBar;
+        }
+
         // if popup opened, popup html redraw
         bar.dateChange(e);
         this._redrawPopup();
       });
 
-      // drag end event handling
+      // drag endDate event handling
     $.on(this.$svg, 'mouseup', e => {
-      //trigger task click event only clicked bar
 
         bars.forEach(bar => {
           const $bar = bar.$bar;
@@ -691,7 +697,7 @@ export default class Gan2Chart {
 
       if (!this._draggingBar) {
         if (e.target.parentElement.classList.contains(`${classNames.barGroup}`)) {
-          this.triggerEvent(e, 'taskClick', [bar.task]);
+          this._triggerEvent(e, 'taskClick', [bar.task]);
         }
       }
 
@@ -700,7 +706,7 @@ export default class Gan2Chart {
     /**
      * bind mouse up event on document
      */
-    document.addEventListener('mouseup', e => {
+    this._$container.addEventListener('mouseup', e => {
       if (isDragging || isResizingLeft || isResizingRight) {
         bars.forEach(bar => bar.$group.classList.remove(`${classNames.active}`));
       }
@@ -730,7 +736,7 @@ export default class Gan2Chart {
       onStartX = e.offsetX;
 
       const $barWrapper = $.closest(`.${classNames.barWrapper}`, $handle);
-      bar = this.getBar($barWrapper.getAttribute('data-id'));
+      bar = this._getBar($barWrapper.getAttribute('data-id'));
 
       $bar = bar.$bar;
       $progressBar = bar.$progressBar;
@@ -746,7 +752,6 @@ export default class Gan2Chart {
       if (!isResizing) return;
 
       let dx = e.offsetX - onStartX;
-      this._draggingBar = bar;
 
       if (dx > $progressBar.maxDx) {
         dx = $progressBar.maxDx;
@@ -791,7 +796,7 @@ export default class Gan2Chart {
     }
 
     if (!this.isPopupOpen) { // trigger event only first time
-      this.triggerEvent(event, 'popupOpen', [task]);
+      this._triggerEvent(event, 'popupOpen', [task]);
     }
 
     this.isPopupOpen = true;
@@ -804,7 +809,7 @@ export default class Gan2Chart {
   public _hidePopup(e?: Event) {
     if (!this.popup) return;
     if (this.isPopupOpen) {
-      this.triggerEvent(e,'popupClose', []);
+      this._triggerEvent(e,'popupClose', []);
     }
     this.isPopupOpen = false;
     this.popup.hide();
@@ -815,7 +820,7 @@ export default class Gan2Chart {
    * @param id
    * @returns {Gan2Bar}
    */
-  public getBar(id): Gan2Bar {
+  public _getBar(id): Gan2Bar {
     return this.bars.find(bar => bar.task.id === id);
   }
 
@@ -876,7 +881,7 @@ export default class Gan2Chart {
    * @param eventName
    * @param params
    */
-  public triggerEvent(e: Event, eventName: string, params: Array<any>): void {
+  public _triggerEvent(e: Event, eventName: string, params: Array<any>): void {
     const key = Object.keys(this.option)
                       .find(key => key.toUpperCase() === `ON${eventName.toUpperCase()}`);
     if (this.option[key]) {

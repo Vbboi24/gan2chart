@@ -38,7 +38,7 @@ export default class Gan2Bar {
    * setup default values
    */
   private prepareValues(): void {
-    this.duration = DateUtil.diff(this.task.end, this.task.start, this.gan2Chart._viewMode - 1)
+    this.duration = DateUtil.diff(this.task.endDate, this.task.startDate, this.gan2Chart._viewMode - 1)
                     / this.gan2Chart.option.step;
 
     this.width = this.gan2Chart.option.columnWidth * this.duration;
@@ -72,7 +72,7 @@ export default class Gan2Bar {
 
   private get computeX(): number {
     const {columnWidth} = this.gan2Chart.option;
-    const diff = DateUtil.diff(this.gan2Chart.startDate, this.task.start, this.gan2Chart._viewMode);
+    const diff = DateUtil.diff(this.gan2Chart.startDate, this.task.startDate, this.gan2Chart._viewMode);
     return diff * columnWidth;
   }
 
@@ -295,7 +295,7 @@ export default class Gan2Bar {
     /**
      * update bar arrow position
      */
-    this.task.arrows.forEach(arrow => arrow.update());
+    this.task._arrows.forEach(arrow => arrow.update());
   }
 
   /**
@@ -317,18 +317,18 @@ export default class Gan2Bar {
    */
   dateChange(e): void {
     const [newStartDate, newEndDate] = this.computeStartEndDate();
-    const [oldStartDate, oldEndDate] = [this.task.start, this.task.end];
+    const [oldStartDate, oldEndDate] = [this.task.startDate, this.task.endDate];
 
     // check and update changed
-    if (this.task.start.getTime() !== newStartDate.getTime()) {
-      this.task.start = newStartDate;
+    if (this.task.startDate.getTime() !== newStartDate.getTime()) {
+      this.task.startDate = newStartDate;
     }
-    if (this.task.end.getTime() !== newEndDate.getTime()) {
-      this.task.end = newEndDate;
+    if (this.task.endDate.getTime() !== newEndDate.getTime()) {
+      this.task.endDate = newEndDate;
     }
 
-    this.gan2Chart.triggerEvent(e, 'change', [this.task]);
-    this.gan2Chart.triggerEvent(e, 'taskChange', [this.task,
+    this.gan2Chart._triggerEvent(e, 'change', [this.task]);
+    this.gan2Chart._triggerEvent(e, 'taskChange', [this.task,
                                                         oldStartDate, oldEndDate,
                                                         newStartDate, newEndDate
                                                       ]);
@@ -341,8 +341,8 @@ export default class Gan2Bar {
     const oldProgress = this.task.progress;
     const newProgress = Math.floor(this.$progressBar.getWidth() / this.$bar.getWidth() * 100);
     this.task.progress = newProgress;
-    this.gan2Chart.triggerEvent(e, 'change', [this.task]);
-    this.gan2Chart.triggerEvent(e, 'taskProgressChange', [this.task, oldProgress, newProgress]);
+    this.gan2Chart._triggerEvent(e, 'change', [this.task]);
+    this.gan2Chart._triggerEvent(e, 'taskProgressChange', [this.task, oldProgress, newProgress]);
   }
 
   /**

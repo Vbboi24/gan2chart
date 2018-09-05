@@ -4,7 +4,9 @@
   <title>Hello, Gan2Chart!</title>
   <meta charset="utf-8">
   <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
-  <script src="dist/gan2chart.min.js"></script>
+  <!--<script src="dist/gan2chart.min.js"></script>-->
+  <script src="dist/gan2chart.js"></script>
+  <link href="dist/gan2chart.css" rel="stylesheet">
   <style>
     h3.title {
       font-family: 'Slabo 27px', serif;
@@ -193,8 +195,8 @@
         onChange: (e, changedTask) => {
           const findTask = task.getAllChildTaskWithThis
               .find(t => t.name === changedTask.name);
-          findTask.start = changedTask.start;
-          findTask.end = changedTask.end;
+          findTask.startDate = changedTask.start;
+          findTask.endDate = changedTask.end;
           findTask.progress = changedTask.progress;
           findTask.gan2Chart.refresh();
         }

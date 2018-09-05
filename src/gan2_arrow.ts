@@ -26,7 +26,7 @@ export default class Gan2Arrow {
     const arrowPadding = 20;
     let startX: number = toTaskBar.$bar.getX() - arrowPadding;
 
-    // set arrow start x point
+    // set arrow startDate x point
     if (startX < fromTaskBar.$bar.getX() + arrowPadding) {
       startX = fromTaskBar.$bar.getX() + arrowPadding;
 

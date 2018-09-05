@@ -9,8 +9,8 @@ export default class Gan2Task {
   // Task options
   id: string;
   index: number;
-  start: Date;
-  end: Date;
+  startDate: Date;
+  endDate: Date;
   progress: number;
   name: string;
   customArrowClass: string;
@@ -24,7 +24,7 @@ export default class Gan2Task {
   parentTask: Gan2Task;
   childTask: Gan2Task[];
   taskBar: Gan2Bar;
-  arrows: Gan2Arrow[];
+  _arrows: Gan2Arrow[];
 
   constructor(gan2Chart: Gan2Chart,
               task: Task,
@@ -37,8 +37,8 @@ export default class Gan2Task {
     this.id = id ? id.toString() : Gan2Task.generateId(task);
     this.name = task.name;
     this.index = gan2Chart._gan2TaskIndex++;
-    this.start = DateUtil.parse(task.start);
-    this.end = DateUtil.parse(task.end);
+    this.startDate = DateUtil.parse(task.start);
+    this.endDate = DateUtil.parse(task.end);
     this.progress = task.progress;
     this.progressFixed = task.progressFixed;
     this.customArrowClass = task.customArrowClass;
@@ -47,23 +47,23 @@ export default class Gan2Task {
 
     this.parentTask = parentTask;
     this.childTask = [];
-    this.arrows = [];
+    this._arrows = [];
 
     // default task date
     if (!task.start && !task.end) {
       const today: Date = DateUtil.today();
-      this.start = today;
-      this.end = DateUtil.add(today, 2, defaultDateScale);
+      this.startDate = today;
+      this.endDate = DateUtil.add(today, 2, defaultDateScale);
     } else {
-      this.start = DateUtil.parse(this.start) || DateUtil.add(this.end, -2, defaultDateScale);
-      this.end = DateUtil.parse(this.end) || DateUtil.add(this.start, 2, defaultDateScale);
+      this.startDate = DateUtil.parse(this.startDate) || DateUtil.add(this.endDate, -2, defaultDateScale);
+      this.endDate = DateUtil.parse(this.endDate) || DateUtil.add(this.startDate, 2, defaultDateScale);
     }
 
     // if hours is not set, assume the last day is full day
     // e.g: 2018-09-09 becomes 2018-09-09 23:59:59
-    const taskEndValue = DateUtil.getDateValues(this.end);
+    const taskEndValue = DateUtil.getDateValues(this.endDate);
     if (taskEndValue.slice(3).every(d => d === 0)) {
-      this.end = DateUtil.add(this.end, 24, DateScale.HOUR);
+      this.endDate = DateUtil.add(this.endDate, 24, DateScale.HOUR);
     }
 
     // if has child task
@@ -78,14 +78,14 @@ export default class Gan2Task {
    * @param {number} parentId
    * @returns {Array<Gan2Arrow>}
    */
-  public drawArrow(parentId?: string): Array<Gan2Arrow> {
-    this.arrows = [].concat(this.childTask.reduce((acc, cur) => acc.concat(cur.drawArrow(this.id)), []));
+  public _drawArrow(parentId?: string): Array<Gan2Arrow> {
+    this._arrows = [].concat(this.childTask.reduce((acc, cur) => acc.concat(cur._drawArrow(this.id)), []));
     if (parentId) {
       const arrow = new Gan2Arrow(this.gan2Chart, this.parentTask, this);
       this.gan2Chart._layers['arrow'].appendChild(arrow.$element);
-      this.arrows.push(arrow);
+      this._arrows.push(arrow);
     }
-    return this.arrows;
+    return this._arrows;
   }
 
   /**

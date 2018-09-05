@@ -94,150 +94,129 @@ var Gan2Chart = (function () {
     }
   };
 
-  (function () {
-    SVGElement.prototype.getX = function () {
+  /**
+   * extend SVGElement prototype for some utility function
+   */
+  SVGElement.prototype.getX = function () {
       return +this.getAttribute('x');
-    };
-    SVGElement.prototype.getY = function () {
+  };
+  SVGElement.prototype.getY = function () {
       return +this.getAttribute('y');
-    };
-    SVGElement.prototype.getWidth = function () {
+  };
+  SVGElement.prototype.getWidth = function () {
       return +this.getAttribute('width');
-    };
-    SVGElement.prototype.getHeight = function () {
+  };
+  SVGElement.prototype.getHeight = function () {
       return +this.getAttribute('height');
-    };
-    SVGElement.prototype.getEndX = function () {
+  };
+  SVGElement.prototype.getEndX = function () {
       return this.getX() + this.getWidth();
-    };
-  })();
-
-  function $(expr, con) {
-    return typeof expr === 'string' ? (con || document).querySelector(expr) : expr || null;
-  }
-
+  };
   function createSVG(tag, attrs) {
-    var elem = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for (var attr in attrs) {
-      if (attr === 'appendTo') {
-        var parent = attrs.appendTo;
-        parent.appendChild(elem);
-      } else if (attr === 'innerHTML') {
-        elem.innerHTML = attrs.innerHTML;
-      } else {
-        elem.setAttribute(attr, attrs[attr]);
+      var elem = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (var attr in attrs) {
+          if (attr === 'appendTo') {
+              attrs.appendTo.appendChild(elem);
+          } else if (attr === 'innerHTML') {
+              elem.innerHTML = attrs.innerHTML;
+          } else {
+              elem.setAttribute(attr, attrs[attr]);
+          }
       }
-    }
-    return elem;
+      return elem;
   }
-
   function animateSVG(svgElement, attr, from, to) {
-    var animatedSvgElement = getAnimationElement(svgElement, attr, from, to);
-
-    if (animatedSvgElement === svgElement) {
-      // triggered 2nd time programmatically
-      // trigger artificial click event
-      var event = document.createEvent('HTMLEvents');
-      event.initEvent('click', true, true);
-      event.eventName = 'click';
-      animatedSvgElement.dispatchEvent(event);
-    }
+      var animatedSvgElement = getAnimationElement(svgElement, attr, from, to);
+      if (animatedSvgElement === svgElement) {
+          // triggered 2nd time programmatically
+          // trigger artificial click event
+          var event = document.createEvent('HTMLEvents');
+          event.initEvent('click', true, true);
+          event.eventName = 'click';
+          animatedSvgElement.dispatchEvent(event);
+      }
   }
-
   function getAnimationElement(svgElement, attr, from, to) {
-    var dur = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '0.4s';
-    var begin = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '0.1s';
+      var dur = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '0.4s';
+      var begin = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '0.1s';
 
-    var animEl = svgElement.querySelector('animate');
-    if (animEl) {
-      $.attr(animEl, {
-        attributeName: attr,
-        from: from,
-        to: to,
-        dur: dur,
-        begin: 'click + ' + begin // artificial click
+      var animEl = svgElement.querySelector('animate');
+      if (animEl) {
+          $.attr(animEl, {
+              attributeName: attr,
+              from: from, to: to, dur: dur,
+              begin: 'click + ' + begin // artificial click
+          });
+          return svgElement;
+      }
+      var animateElement = createSVG('animate', {
+          attributeName: attr,
+          from: from, to: to, dur: dur, begin: begin,
+          calcMode: 'spline',
+          values: from + ';' + to,
+          keyTimes: '0; 1',
+          keySplines: cubic_bezier('ease-out')
       });
+      svgElement.appendChild(animateElement);
       return svgElement;
-    }
-
-    var animateElement = createSVG('animate', {
-      attributeName: attr,
-      from: from,
-      to: to,
-      dur: dur,
-      begin: begin,
-      calcMode: 'spline',
-      values: from + ';' + to,
-      keyTimes: '0; 1',
-      keySplines: cubic_bezier('ease-out')
-    });
-    svgElement.appendChild(animateElement);
-
-    return svgElement;
   }
-
   function cubic_bezier(name) {
-    return {
-      ease: '.25 .1 .25 1',
-      linear: '0 0 1 1',
-      'ease-in': '.42 0 1 1',
-      'ease-out': '0 0 .58 1',
-      'ease-in-out': '.42 0 .58 1'
-    }[name];
+      return {
+          ease: '.25 .1 .25 1',
+          linear: '0 0 1 1',
+          'ease-in': '.42 0 1 1',
+          'ease-out': '0 0 .58 1',
+          'ease-in-out': '.42 0 .58 1'
+      }[name];
   }
-
-  $.on = function (element, event, selector, callback) {
-    if (!callback) {
-      callback = selector;
-      $.bind(element, event, callback);
-    } else {
-      $.delegate(element, event, selector, callback);
-    }
-  };
-
-  $.off = function (element, event, handler) {
-    element.removeEventListener(event, handler);
-  };
-
-  $.bind = function (element, event, callback) {
-    event.split(/\s+/).forEach(function (event) {
-      element.addEventListener(event, callback);
-    });
-  };
-
-  $.delegate = function (element, event, selector, callback) {
-    element.addEventListener(event, function (e) {
-      var delegatedTarget = e.target.closest(selector);
-      if (delegatedTarget) {
-        e.delegatedTarget = delegatedTarget;
-        callback.call(this, e, delegatedTarget);
+  /**
+   * utility function object like JQuery
+   */
+  var $ = {
+      on: function on(element, event, selector, callback) {
+          if (!callback) {
+              callback = selector;
+              $.bind(element, event, callback);
+          } else {
+              $.delegate(element, event, selector, callback);
+          }
+      },
+      off: function off(element, event, handler) {
+          element.removeEventListener(event, handler);
+      },
+      bind: function bind(element, event, callback) {
+          event.split(/\s+/).forEach(function (event) {
+              element.addEventListener(event, callback);
+          });
+      },
+      delegate: function delegate(element, event, selector, callback) {
+          element.addEventListener(event, function (e) {
+              var delegatedTarget = e.target.closest(selector);
+              if (delegatedTarget) {
+                  e.delegatedTarget = delegatedTarget;
+                  callback.call(this, e, delegatedTarget);
+              }
+          });
+      },
+      closest: function closest(selector, element) {
+          if (!element) return null;
+          if (element.matches(selector)) {
+              return element;
+          }
+          return $.closest(selector, element.parentNode);
+      },
+      attr: function attr(element, _attr, value) {
+          if (!value && typeof _attr === 'string') {
+              return element.getAttribute(_attr);
+          }
+          if ((typeof _attr === 'undefined' ? 'undefined' : _typeof(_attr)) === 'object') {
+              for (var key in _attr) {
+                  $.attr(element, key, _attr[key]);
+              }
+              return;
+          }
+          element.setAttribute(_attr, value);
       }
-    });
-  };
-
-  $.closest = function (selector, element) {
-    if (!element) return null;
-
-    if (element.matches(selector)) {
-      return element;
-    }
-
-    return $.closest(selector, element.parentNode);
-  };
-
-  $.attr = function (element, attr, value) {
-    if (!value && typeof attr === 'string') {
-      return element.getAttribute(attr);
-    }
-
-    if ((typeof attr === 'undefined' ? 'undefined' : _typeof(attr)) === 'object') {
-      for (var key in attr) {
-        $.attr(element, key, attr[key]);
-      }
-      return;
-    }
-
-    element.setAttribute(attr, value);
   };
 
   var DateScale;
@@ -289,6 +268,7 @@ var Gan2Chart = (function () {
           hour: '시'
       }
   };
+  //# sourceMappingURL=module.js.map
 
   var DateUtil = function () {
       function DateUtil() {
@@ -604,7 +584,7 @@ var Gan2Chart = (function () {
 
               var arrowPadding = 20;
               var startX = toTaskBar.$bar.getX() - arrowPadding;
-              // set arrow start x point
+              // set arrow startDate x point
               if (startX < fromTaskBar.$bar.getX() + arrowPadding) {
                   startX = fromTaskBar.$bar.getX() + arrowPadding;
               } else if (startX > fromTaskBar.$bar.getX() + fromTaskBar.$bar.getWidth() - arrowPadding) {
@@ -665,8 +645,8 @@ var Gan2Chart = (function () {
           this.id = id ? id.toString() : Gan2Task.generateId(task);
           this.name = task.name;
           this.index = gan2Chart._gan2TaskIndex++;
-          this.start = DateUtil.parse(task.start);
-          this.end = DateUtil.parse(task.end);
+          this.startDate = DateUtil.parse(task.start);
+          this.endDate = DateUtil.parse(task.end);
           this.progress = task.progress;
           this.progressFixed = task.progressFixed;
           this.customArrowClass = task.customArrowClass;
@@ -674,23 +654,23 @@ var Gan2Chart = (function () {
           this.fixed = task.fixed;
           this.parentTask = parentTask;
           this.childTask = [];
-          this.arrows = [];
+          this._arrows = [];
           // default task date
           if (!task.start && !task.end) {
               var today = DateUtil.today();
-              this.start = today;
-              this.end = DateUtil.add(today, 2, defaultDateScale);
+              this.startDate = today;
+              this.endDate = DateUtil.add(today, 2, defaultDateScale);
           } else {
-              this.start = DateUtil.parse(this.start) || DateUtil.add(this.end, -2, defaultDateScale);
-              this.end = DateUtil.parse(this.end) || DateUtil.add(this.start, 2, defaultDateScale);
+              this.startDate = DateUtil.parse(this.startDate) || DateUtil.add(this.endDate, -2, defaultDateScale);
+              this.endDate = DateUtil.parse(this.endDate) || DateUtil.add(this.startDate, 2, defaultDateScale);
           }
           // if hours is not set, assume the last day is full day
           // e.g: 2018-09-09 becomes 2018-09-09 23:59:59
-          var taskEndValue = DateUtil.getDateValues(this.end);
+          var taskEndValue = DateUtil.getDateValues(this.endDate);
           if (taskEndValue.slice(3).every(function (d) {
               return d === 0;
           })) {
-              this.end = DateUtil.add(this.end, 24, DateScale.HOUR);
+              this.endDate = DateUtil.add(this.endDate, 24, DateScale.HOUR);
           }
           // if has child task
           if (task.childTask) {
@@ -707,19 +687,19 @@ var Gan2Chart = (function () {
 
 
       createClass(Gan2Task, [{
-          key: 'drawArrow',
-          value: function drawArrow(parentId) {
+          key: '_drawArrow',
+          value: function _drawArrow(parentId) {
               var _this2 = this;
 
-              this.arrows = [].concat(this.childTask.reduce(function (acc, cur) {
-                  return acc.concat(cur.drawArrow(_this2.id));
+              this._arrows = [].concat(this.childTask.reduce(function (acc, cur) {
+                  return acc.concat(cur._drawArrow(_this2.id));
               }, []));
               if (parentId) {
                   var arrow = new Gan2Arrow(this.gan2Chart, this.parentTask, this);
                   this.gan2Chart._layers['arrow'].appendChild(arrow.$element);
-                  this.arrows.push(arrow);
+                  this._arrows.push(arrow);
               }
-              return this.arrows;
+              return this._arrows;
           }
           /**
            * get all child tasks from this task
@@ -778,7 +758,7 @@ var Gan2Chart = (function () {
       createClass(Gan2Bar, [{
           key: 'prepareValues',
           value: function prepareValues() {
-              this.duration = DateUtil.diff(this.task.end, this.task.start, this.gan2Chart._viewMode - 1) / this.gan2Chart.option.step;
+              this.duration = DateUtil.diff(this.task.endDate, this.task.startDate, this.gan2Chart._viewMode - 1) / this.gan2Chart.option.step;
               this.width = this.gan2Chart.option.columnWidth * this.duration;
               this.height = this.gan2Chart.option.barHeight;
               this.x = this.computeX;
@@ -1014,7 +994,7 @@ var Gan2Chart = (function () {
               /**
                * update bar arrow position
                */
-              this.task.arrows.forEach(function (arrow) {
+              this.task._arrows.forEach(function (arrow) {
                   return arrow.update();
               });
           }
@@ -1045,19 +1025,19 @@ var Gan2Chart = (function () {
                   newStartDate = _computeStartEndDate2[0],
                   newEndDate = _computeStartEndDate2[1];
 
-              var _ref2 = [this.task.start, this.task.end],
+              var _ref2 = [this.task.startDate, this.task.endDate],
                   oldStartDate = _ref2[0],
                   oldEndDate = _ref2[1];
               // check and update changed
 
-              if (this.task.start.getTime() !== newStartDate.getTime()) {
-                  this.task.start = newStartDate;
+              if (this.task.startDate.getTime() !== newStartDate.getTime()) {
+                  this.task.startDate = newStartDate;
               }
-              if (this.task.end.getTime() !== newEndDate.getTime()) {
-                  this.task.end = newEndDate;
+              if (this.task.endDate.getTime() !== newEndDate.getTime()) {
+                  this.task.endDate = newEndDate;
               }
-              this.gan2Chart.triggerEvent(e, 'change', [this.task]);
-              this.gan2Chart.triggerEvent(e, 'taskChange', [this.task, oldStartDate, oldEndDate, newStartDate, newEndDate]);
+              this.gan2Chart._triggerEvent(e, 'change', [this.task]);
+              this.gan2Chart._triggerEvent(e, 'taskChange', [this.task, oldStartDate, oldEndDate, newStartDate, newEndDate]);
           }
           /**
            * change progress bar
@@ -1069,8 +1049,8 @@ var Gan2Chart = (function () {
               var oldProgress = this.task.progress;
               var newProgress = Math.floor(this.$progressBar.getWidth() / this.$bar.getWidth() * 100);
               this.task.progress = newProgress;
-              this.gan2Chart.triggerEvent(e, 'change', [this.task]);
-              this.gan2Chart.triggerEvent(e, 'taskProgressChange', [this.task, oldProgress, newProgress]);
+              this.gan2Chart._triggerEvent(e, 'change', [this.task]);
+              this.gan2Chart._triggerEvent(e, 'taskProgressChange', [this.task, oldProgress, newProgress]);
           }
           /**
            * compute on moved bar
@@ -1109,7 +1089,7 @@ var Gan2Chart = (function () {
           get: function get$$1() {
               var columnWidth = this.gan2Chart.option.columnWidth;
 
-              var diff = DateUtil.diff(this.gan2Chart.startDate, this.task.start, this.gan2Chart._viewMode);
+              var diff = DateUtil.diff(this.gan2Chart.startDate, this.task.startDate, this.gan2Chart._viewMode);
               return diff * columnWidth;
           }
       }, {
@@ -1189,8 +1169,8 @@ var Gan2Chart = (function () {
       }, {
           key: 'defaultHtmlSupplier',
           value: function defaultHtmlSupplier(task) {
-              var start = DateUtil.format(task.start, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
-              var end = DateUtil.format(task.end, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
+              var start = DateUtil.format(task.startDate, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
+              var end = DateUtil.format(task.endDate, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
               return '<div class="title">' + task.name + '</div>\n            <div class="content">\n              <div>' + start + '</div>\n              <div>~ ' + end + '</div>\n            </div>';
           }
       }]);
@@ -1292,7 +1272,7 @@ var Gan2Chart = (function () {
           value: function setupTasks(task) {
               var _this = this;
 
-              if (!(task instanceof Array)) {
+              if (!Array.isArray(task)) {
                   task = [task];
               } else if (task[0] instanceof Gan2Task) {
                   task = this.gan2TaskToTask(task);
@@ -1305,7 +1285,7 @@ var Gan2Chart = (function () {
               }, 0) + this.option.paddingBarCount;
           }
           /**
-           * update view mode and redraw, event handling
+           * update view mode and redraw with event handling
            * @param newViewMode
            * @param setScroll
            */
@@ -1345,7 +1325,7 @@ var Gan2Chart = (function () {
               }
           }
           /**
-           *
+           * set chart dates
            */
 
       }, {
@@ -1355,7 +1335,7 @@ var Gan2Chart = (function () {
               setupGanttDateRange();
               setupDateValue();
               /**
-               * find start and end date for gantt chart drawing
+               * find startDate and endDate date for gantt chart drawing
                * @param datePaddingScale
                * @param datePaddingQty
                */
@@ -1438,7 +1418,7 @@ var Gan2Chart = (function () {
               this.drawArrows();
           }
           /**
-           * scroll To task start position
+           * scroll To task startDate position
            */
 
       }, {
@@ -1460,9 +1440,9 @@ var Gan2Chart = (function () {
       }, {
           key: 'drawArrows',
           value: function drawArrows() {
-              this.tasks.reduce(function (acc, cur) {
-                  return acc.concat(cur.drawArrow());
-              }, []);
+              this.tasks.forEach(function (task) {
+                  return task._drawArrow();
+              });
           }
           /**
            * create svg layer
@@ -1473,7 +1453,6 @@ var Gan2Chart = (function () {
           value: function setupLayer() {
               this._layers = {};
               var layers = ['grid', 'date', 'arrow', 'progress', 'bar', 'details'];
-              // make $group _layers
               var _iteratorNormalCompletion = true;
               var _didIteratorError = false;
               var _iteratorError = undefined;
@@ -1654,7 +1633,7 @@ var Gan2Chart = (function () {
                           appendTo: this._layers['date']
                       });
                       // remove out-of-bound chartDates
-                      if ($upperText.getBBox().x2 > this._layers['grid'].getBBox().width) {
+                      if ($upperText.getBBox().x > this._layers['grid'].getBBox().width) {
                           $upperText.remove();
                       }
                       // upper text divide line
@@ -1741,12 +1720,12 @@ var Gan2Chart = (function () {
               var isAction = function isAction() {
                   return isDragging || isResizingLeft || isResizingRight;
               };
-              // drag start event handling
+              // drag startDate event handling
               $.on(this.$svg, 'mousedown', '.' + classNames.barWrapper + ', .' + classNames.handle, function (e, $bar) {
                   var barWrapper = $.closest('.' + classNames.barWrapper, $bar);
                   barWrapper.classList.add(classNames.active);
                   // get bar object
-                  bar = _this4.getBar(barWrapper.getAttribute('data-id'));
+                  bar = _this4._getBar(barWrapper.getAttribute('data-id'));
                   if (!bar || bar && bar.fixed) return; // invalid or fixed bar
                   // check target and event
                   var classList = $bar.classList;
@@ -1757,7 +1736,7 @@ var Gan2Chart = (function () {
                   } else if (classList.contains('' + classNames.barWrapper)) {
                       isDragging = true;
                   }
-                  // event start position
+                  // event startDate position
                   xOnStart = e.offsetX;
                   yOnStart = e.offsetY;
                   // move all bars
@@ -1776,12 +1755,12 @@ var Gan2Chart = (function () {
               $.on(this.$svg, 'mousemove', function (e) {
                   if (!isAction()) return;
                   var dx = e.offsetX - xOnStart;
-                  _this4._draggingBar = bar;
+                  var draggingBar = bar;
                   bars.forEach(function (bar) {
                       var $bar = bar.$bar;
                       $bar.finaldx = _this4.getSnapPosition(dx);
                       if (isResizingLeft) {
-                          if (_this4._draggingBar === bar) {
+                          if (draggingBar === bar) {
                               bar.updateBarPosition({
                                   x: $bar.ox + $bar.finaldx,
                                   width: $bar.owidth - $bar.finaldx
@@ -1796,13 +1775,16 @@ var Gan2Chart = (function () {
                           if (bar.isUpdatableX(moveX)) bar.updateBarPosition({ x: moveX });
                       }
                   });
+                  // if moved snap position, hold dragged bar
+                  if (dx !== bar.$bar.finaldx) {
+                      _this4._draggingBar = draggingBar;
+                  }
                   // if popup opened, popup html redraw
                   bar.dateChange(e);
                   _this4._redrawPopup();
               });
-              // drag end event handling
+              // drag endDate event handling
               $.on(this.$svg, 'mouseup', function (e) {
-                  //trigger task click event only clicked bar
                   bars.forEach(function (bar) {
                       var $bar = bar.$bar;
                       if (!$bar.finaldx) return;
@@ -1810,14 +1792,14 @@ var Gan2Chart = (function () {
                   });
                   if (!_this4._draggingBar) {
                       if (e.target.parentElement.classList.contains('' + classNames.barGroup)) {
-                          _this4.triggerEvent(e, 'taskClick', [bar.task]);
+                          _this4._triggerEvent(e, 'taskClick', [bar.task]);
                       }
                   }
               });
               /**
                * bind mouse up event on document
                */
-              document.addEventListener('mouseup', function (e) {
+              this._$container.addEventListener('mouseup', function (e) {
                   if (isDragging || isResizingLeft || isResizingRight) {
                       bars.forEach(function (bar) {
                           return bar.$group.classList.remove('' + classNames.active);
@@ -1852,7 +1834,7 @@ var Gan2Chart = (function () {
                   isResizing = true;
                   onStartX = e.offsetX;
                   var $barWrapper = $.closest('.' + classNames.barWrapper, $handle);
-                  bar = _this5.getBar($barWrapper.getAttribute('data-id'));
+                  bar = _this5._getBar($barWrapper.getAttribute('data-id'));
                   $bar = bar.$bar;
                   $progressBar = bar.$progressBar;
                   $progressBar.finaldx = 0;
@@ -1863,7 +1845,6 @@ var Gan2Chart = (function () {
               $.on(this.$svg, 'mousemove', function (e) {
                   if (!isResizing) return;
                   var dx = e.offsetX - onStartX;
-                  _this5._draggingBar = bar;
                   if (dx > $progressBar.maxDx) {
                       dx = $progressBar.maxDx;
                   }
@@ -1907,7 +1888,7 @@ var Gan2Chart = (function () {
               }
               if (!this.isPopupOpen) {
                   // trigger event only first time
-                  this.triggerEvent(event, 'popupOpen', [task]);
+                  this._triggerEvent(event, 'popupOpen', [task]);
               }
               this.isPopupOpen = true;
               this.popup.show(task, event);
@@ -1921,7 +1902,7 @@ var Gan2Chart = (function () {
           value: function _hidePopup(e) {
               if (!this.popup) return;
               if (this.isPopupOpen) {
-                  this.triggerEvent(e, 'popupClose', []);
+                  this._triggerEvent(e, 'popupClose', []);
               }
               this.isPopupOpen = false;
               this.popup.hide();
@@ -1933,8 +1914,8 @@ var Gan2Chart = (function () {
            */
 
       }, {
-          key: 'getBar',
-          value: function getBar(id) {
+          key: '_getBar',
+          value: function _getBar(id) {
               return this.bars.find(function (bar) {
                   return bar.task.id === id;
               });
@@ -1999,8 +1980,8 @@ var Gan2Chart = (function () {
            */
 
       }, {
-          key: 'triggerEvent',
-          value: function triggerEvent(e, eventName, params) {
+          key: '_triggerEvent',
+          value: function _triggerEvent(e, eventName, params) {
               var key = Object.keys(this.option).find(function (key) {
                   return key.toUpperCase() === 'ON' + eventName.toUpperCase();
               });

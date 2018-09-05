@@ -69,8 +69,8 @@ export default class Gan2Popup {
    * @param task
    */
   private defaultHtmlSupplier(task: Gan2Task): string {
-    const start = DateUtil.format(task.start, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
-    const end = DateUtil.format(task.end, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
+    const start = DateUtil.format(task.startDate, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
+    const end = DateUtil.format(task.endDate, 'YYYY-MM-DD HH:mm:ss', this.gan2Chart.option.language);
     return `<div class="title">${task.name}</div>
             <div class="content">
               <div>${start}</div>
