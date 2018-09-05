@@ -18,7 +18,7 @@ or
 ```
 
 and start:
-```
+```js
   const tasks = [
     {
       startDate: '2018-10-01 01:00:00',
@@ -124,7 +124,7 @@ and start:
 
 ## Features
 - Option Object
-  ```
+  ```js
   /**
    * Task option
    */
@@ -188,7 +188,7 @@ and start:
 
 - API and Property
   * Gan2Chart
-  ```
+  ```js
   /**
    * update view mode and redraw with event handling
    * @param newViewMode
@@ -206,7 +206,7 @@ and start:
   
   
   * Gan2Task
-  ```
+  ```js
   id: string;
   index: number;
   startDate: Date;
