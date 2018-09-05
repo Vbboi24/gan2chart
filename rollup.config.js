@@ -10,7 +10,7 @@ const dev = {
     output: {
         name: 'Gan2Chart',
         file: 'dist/gan2chart.js',
-        format: 'iife'
+        format: 'cjs'
     },
     plugins: [
     		typescript(),
@@ -25,8 +25,7 @@ const prod = merge(dev, {
         file: 'dist/gan2chart.min.js'
     },
     plugins: [uglify(),
-              postcss({extensions: [ '.css' ]})
-    ]
+              postcss({extensions: [ '.css' ]})]
 });
 
 export default [dev, prod];

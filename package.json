@@ -1,8 +1,8 @@
 {
   "name": "gan2chart",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A gantt chart library",
-  "main": "src/index.js",
+  "main": "dist/gan2chart.min.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w"
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/partnerjun/gan2chart.git"
   },
   "keywords": [
-    "gantt"
+    "gantt", "gantt chart"
   ],
   "author": "partnerjun",
   "license": "MIT",

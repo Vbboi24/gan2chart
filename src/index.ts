@@ -137,6 +137,7 @@ export default class Gan2Chart {
     // TypeCheck
     if (typeof element === 'string') {
       $element = document.querySelector(element);
+      if (!$element) throw 'Gan2Chart needs wrapper element';
 
     } else if (element instanceof HTMLElement) {
       $element = element;
