@@ -41,6 +41,7 @@ export interface Option {
   startDate?: string,     // optional. gantt chart startDate date
   endDate?: string,       // optional. gantt chart endDate date
   weekendCheck: boolean,
+  ignoreIndex?: boolean,  // default: true. generate new index.
   autoScroll: boolean,    // default: true. scroll to gantt chart startDate point
   datePaddingQty: any,    // default: true. ['auto', number] chart will be shown [startDate date - qty] to [endDate date + qty]
   paddingBarCount: number // default: 2. set the padding bar count on the bottom
@@ -74,6 +75,7 @@ const defaultOption: Option = {
   popupTrigger: 'mousemove',
   popupHtmlSupplier: null,
   autoScroll: true,
+  ignoreIndex: true,
   language: 'en',
   datePaddingQty: 'auto',
   paddingBarCount: 2
@@ -190,8 +192,7 @@ export default class Gan2Chart {
     }
 
     this.tasks = tasks.map(task => new Gan2Task(this, task, this._viewMode));
-    this._gan2TaskLength = this.tasks.reduce((acc, cur) => acc + cur.length, 0)
-                          + this.option.paddingBarCount;
+    this._gan2TaskLength = this._gan2TaskIndex + this.option.paddingBarCount;
   }
 
   /**

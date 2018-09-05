@@ -134,11 +134,13 @@ and start:
     name: string,
     id: string,
     progress: number,
-    index?: number,
+    index?: number,              // task bar index. 
+                                 // if you need this option, 
+                                 // you have to set the option 'ignoreIndex' to false
     customClass?: string;
     customArrowClass?: string;
-    fixed?: boolean; // task fix
-    progressFixed?: boolean; // task progress fix
+    fixed?: boolean;            // task fix
+    progressFixed?: boolean;    // task progress fix
     childTask: Task[]
   }
   
@@ -159,6 +161,7 @@ and start:
     startDate?: string,      // optional. gantt chart start date
     endDate?: string,        // optional. gantt chart end date
     weekendCheck?: boolean,  // default: true. fill the cell of sunday and saturday
+    ignoreIndex?: boolean,   // default: true. generate new index.
     autoScroll: boolean,     // default: true. scroll to gantt chart start point
     datePaddingQty: any,     // default: true. ['auto', number] chart will be shown [start date - qty] to [end date + qty]
     paddingBarCount: number, // default: 2. set the padding bar count on the bottom

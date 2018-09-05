@@ -648,7 +648,6 @@
           this._task = task;
           this.id = id ? id.toString() : Gan2Task.generateId(task);
           this.name = task.name;
-          this.index = gan2Chart._gan2TaskIndex++;
           this.startDate = DateUtil.parse(task.startDate);
           this.endDate = DateUtil.parse(task.endDate);
           this.progress = task.progress;
@@ -656,6 +655,12 @@
           this.customArrowClass = task.customArrowClass;
           this.customClass = task.customClass;
           this.fixed = task.fixed;
+          // set task index
+          if (gan2Chart.option.ignoreIndex || task.index === undefined || task.index === null) {
+              this.index = gan2Chart._gan2TaskIndex++;
+          } else {
+              this.index = task.index;
+          }
           this.parentTask = parentTask;
           this.childTask = [];
           this._arrows = [];
@@ -1197,6 +1202,7 @@
       popupTrigger: 'mousemove',
       popupHtmlSupplier: null,
       autoScroll: true,
+      ignoreIndex: true,
       language: 'en',
       datePaddingQty: 'auto',
       paddingBarCount: 2
@@ -1286,9 +1292,7 @@
               this.tasks = tasks.map(function (task) {
                   return new Gan2Task(_this, task, _this._viewMode);
               });
-              this._gan2TaskLength = this.tasks.reduce(function (acc, cur) {
-                  return acc + cur.length;
-              }, 0) + this.option.paddingBarCount;
+              this._gan2TaskLength = this._gan2TaskIndex + this.option.paddingBarCount;
           }
           /**
            * update view mode and redraw with event handling

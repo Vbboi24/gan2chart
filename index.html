@@ -108,6 +108,17 @@
 <script>
   const tasks = [
     {
+      startDate: '2018-10-18 01:00:00',
+      endDate: '2018-10-30 20:00:00',
+      name: 'Project Y',
+      id: "task0",
+      index: 0,
+      progress: 70,
+      progressFixed: true,
+      customClass: 'bar-tomato',
+      childTask: []
+    },
+    {
       startDate: '2018-10-01 01:00:00',
       endDate: '2018-10-14 20:00:00',
       name: 'Project X',
@@ -158,11 +169,12 @@
   ];
 
 
-  new Gan2Chart('#parent-chart', tasks, {
+  const gan2Chart = new Gan2Chart('#parent-chart', tasks, {
     viewMode: 'day',
     popupTrigger: 'click',
     autoScroll: false,
     language: 'ko',
+    ignoreIndex: false,
     datePaddingQty: 5,
     popupHtmlSupplier: (task) => {
       return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
@@ -191,6 +203,7 @@
         language: 'en',
         viewMode: 'hour',
         autoScroll: true,
+        ignoreIndex: true,
         paddingBarCount: 1,
         onChange: (e, changedTask) => {
           const findTask = task.getAllChildTaskWithThis

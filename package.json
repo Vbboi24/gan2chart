@@ -1,6 +1,6 @@
 {
   "name": "gan2chart",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A gantt chart library",
   "main": "dist/gan2chart.min.js",
   "scripts": {
