@@ -71,7 +71,8 @@ and start:
   ];
 
 
-  new Gan2Chart('#parent-chart', tasks, {
+                 // new Gan2Chart('cssQuery', Task[], option);
+  const gan2Chart = new Gan2Chart('#chart', tasks, {
     viewMode: 'day',
     popupTrigger: 'click',
     autoScroll: false,
