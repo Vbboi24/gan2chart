@@ -152,6 +152,7 @@
   font-size: 12px;
   display: inline-block;
   width: auto;
+  max-width: 100%;
   text-align: left !important; }
   .gan2-container .popup-wrapper {
     position: absolute;

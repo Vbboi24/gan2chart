@@ -198,6 +198,7 @@ $popup-shadow-color: #ccc !default
   font-size: 12px;
   display: inline-block;
   width: auto;
+  max-width: 100%;
   text-align: left !important;
 
   .popup-wrapper {
