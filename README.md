@@ -189,6 +189,9 @@ and start:
 - API and Property
   * Gan2Chart
   ```js
+  option: Option;   
+  tasks: Gan2Task[];
+  
   /**
    * update view mode and redraw with event handling
    * @param newViewMode
