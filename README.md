@@ -80,10 +80,10 @@ and start:
     autoScroll: false,
     language: 'ko',
     datePaddingQty: 5,
-    popupHtmlSupplier: (task) => {
-      return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
-              <div class="date">${format(task.startDate)} ~ ${format(task.endDate)}</div>
-              <div class="content">progress: ${task.progress}%</div>`;
+    popupHtmlSupplier: (gan2task) => {
+      return `<div class="title">${gan2task.name} ${gan2task.fixed ? '&para;' : ''}</div>
+              <div class="date">${format(gan2task.startDate)} ~ ${format(gan2task.endDate)}</div>
+              <div class="content">progress: ${gan2task.progress}%</div>`;
     },
     onTaskProgressChange: (e, task, oldProgress, newProgress) => {
       if (e.type === 'mouseup') {
