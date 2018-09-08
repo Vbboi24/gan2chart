@@ -238,10 +238,12 @@ and start:
    */
   parentTask: Gan2Task
   
+  childTask: Gan2Task[]
+  
   /**
    * get all child tasks from this task
    */
-  getAllChildTaskWithThis: number
+  getAllChildTaskWithThis: Gan2Task[]
   ```
 
 ## License
