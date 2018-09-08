@@ -170,15 +170,15 @@ and start:
     datePaddingQty: any,     // default: true. ['auto', number] chart will be shown [start date - qty] to [end date + qty]
     paddingBarCount: number, // default: 2. set the padding bar count on the bottom
     
-    onTaskProgressChange: (e, task, oldProgress, newProgress) => {
+    onTaskProgressChange: (e, gan2task, oldProgress, newProgress) => {
     
     },
     
-    onTaskChange: (e, task, oldTaskStart, oldTaskEnd, newTaskStart, newTaskEnd) => {
+    onTaskChange: (e, gan2task, oldTaskStart, oldTaskEnd, newTaskStart, newTaskEnd) => {
     
     },
     
-    onPopupOpen: (e, task) => {
+    onPopupOpen: (e, gan2task) => {
     
     },
     
@@ -186,7 +186,7 @@ and start:
     
     },
     
-    onTaskClick: (e, task) => {
+    onTaskClick: (e, gan2task) => {
     
     }
   }
