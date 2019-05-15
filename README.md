@@ -28,6 +28,7 @@ and start:
       progress: 70,
       progressFixed: true,
       customClass: 'bar-tomato',
+      obj: { author: 'jack' },
       childTask: [
         {
           startDate: '2018-10-01 02:00:00',
@@ -83,7 +84,7 @@ and start:
     popupHtmlSupplier: (task) => {
       return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
               <div class="date">${format(task.startDate)} ~ ${format(task.endDate)}</div>
-              <div class="content">progress: ${task.progress}%</div>`;
+              <div class="content">progress: ${task.progress}% - ${task.obj ? task.obj.author : ''}</div>`;
     },
     onTaskProgressChange: (e, task, oldProgress, newProgress) => {
       if (e.type === 'mouseup') {
@@ -144,7 +145,9 @@ and start:
     customArrowClass?: string;
     fixed?: boolean;            // task fix
     progressFixed?: boolean;    // task progress fix
-    childTask: Task[]
+    obj?: object;               // custom object for show something on popup html
+    
+    childTask: Task[];
   }
   ```
   ```js
@@ -227,6 +230,7 @@ and start:
   customClass: string;
   fixed: boolean;
   progressFixed: boolean;
+  obj: object; 
     
   /**
    * get gan2chart

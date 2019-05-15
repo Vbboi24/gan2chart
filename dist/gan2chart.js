@@ -273,6 +273,7 @@
           hour: '시'
       }
   };
+  //# sourceMappingURL=module.js.map
 
   var DateUtil = function () {
       function DateUtil() {
@@ -655,6 +656,7 @@
           this.customArrowClass = task.customArrowClass;
           this.customClass = task.customClass;
           this.fixed = task.fixed;
+          this.obj = task.obj;
           // set task index
           if (gan2Chart.option.ignoreIndex || task.index === undefined || task.index === null) {
               this.index = gan2Chart._gan2TaskIndex++;

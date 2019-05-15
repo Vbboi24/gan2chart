@@ -116,6 +116,7 @@
       progress: 70,
       progressFixed: true,
       customClass: 'bar-tomato',
+      obj: { author: 'jack' },
       childTask: []
     },
     {
@@ -179,7 +180,7 @@
     popupHtmlSupplier: (task) => {
       return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
               <div class="date">${format(task.startDate)} ~ ${format(task.endDate)}</div>
-              <div class="content">progress: ${task.progress}%</div>`;
+              <div class="content">progress: ${task.progress}% - ${task.obj ? task.obj.author: ''}</div>`;
     },
     onTaskProgressChange: (e, task, oldProgress, newProgress) => {
       if (e.type === 'mouseup') {

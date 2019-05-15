@@ -15,12 +15,15 @@ export interface Task {
   name: string,
   id: string,
   progress: number,
+
   index?: number,
   customClass?: string;
   customArrowClass?: string;
   fixed?: boolean;
   progressFixed?: boolean;
-  childTask: Task[]
+  obj?: object;
+
+  childTask: Task[];
 }
 
 /**

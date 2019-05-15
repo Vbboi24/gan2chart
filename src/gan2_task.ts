@@ -19,6 +19,7 @@ export default class Gan2Task {
   progressFixed: boolean;
   gan2Chart: Gan2Chart;
   _task: Task;
+  obj: object;
 
   // Gan2Chart Objects
   parentTask: Gan2Task;
@@ -43,6 +44,7 @@ export default class Gan2Task {
     this.customArrowClass = task.customArrowClass;
     this.customClass = task.customClass;
     this.fixed = task.fixed;
+    this.obj = task.obj;
 
     // set task index
     if (gan2Chart.option.ignoreIndex || task.index === undefined || task.index === null) {
