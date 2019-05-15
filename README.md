@@ -81,10 +81,10 @@ and start:
     autoScroll: false,
     language: 'ko',
     datePaddingQty: 5,
-    popupHtmlSupplier: (task) => {
-      return `<div class="title">${task.name} ${task.fixed ? '&para;' : ''}</div>
-              <div class="date">${format(task.startDate)} ~ ${format(task.endDate)}</div>
-              <div class="content">progress: ${task.progress}% - ${task.obj ? task.obj.author : ''}</div>`;
+    popupHtmlSupplier: (gan2task) => {
+      return `<div class="title">${gan2task.name} ${gan2task.fixed ? '&para;' : ''}</div>
+              <div class="date">${format(gan2task.startDate)} ~ ${format(gan2task.endDate)}</div>
+              <div class="content">progress: ${gan2task.progress}%</div>`;
     },
     onTaskProgressChange: (e, task, oldProgress, newProgress) => {
       if (e.type === 'mouseup') {
@@ -173,15 +173,15 @@ and start:
     datePaddingQty: any,     // default: true. ['auto', number] chart will be shown [start date - qty] to [end date + qty]
     paddingBarCount: number, // default: 2. set the padding bar count on the bottom
     
-    onTaskProgressChange: (e, task, oldProgress, newProgress) => {
+    onTaskProgressChange: (e, gan2task, oldProgress, newProgress) => {
     
     },
     
-    onTaskChange: (e, task, oldTaskStart, oldTaskEnd, newTaskStart, newTaskEnd) => {
+    onTaskChange: (e, gan2task, oldTaskStart, oldTaskEnd, newTaskStart, newTaskEnd) => {
     
     },
     
-    onPopupOpen: (e, task) => {
+    onPopupOpen: (e, gan2task) => {
     
     },
     
@@ -189,7 +189,7 @@ and start:
     
     },
     
-    onTaskClick: (e, task) => {
+    onTaskClick: (e, gan2task) => {
     
     }
   }
@@ -242,10 +242,12 @@ and start:
    */
   parentTask: Gan2Task
   
+  childTask: Gan2Task[]
+  
   /**
    * get all child tasks from this task
    */
-  getAllChildTaskWithThis: number
+  getAllChildTaskWithThis: Gan2Task[]
   ```
 
 ## License
